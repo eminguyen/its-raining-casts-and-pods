@@ -14,6 +14,7 @@ const port = 3000;
 
 app.use(bodyParser());
 app.use(cors());
+app.use(express.static(__dirname + '/public'));
 
 // Path joins the current directory name with views (aka current directory + views)
 app.set('views', path.join(__dirname, 'views'));
