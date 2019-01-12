@@ -29,7 +29,6 @@ app.listen(port, function() {
 /* twilio stuff */
 const twilio = require('twilio');
 const client = new twilio(config.twilioSid, config.twilioToken);
-<<<<<<< HEAD
 
 // client.messages.create({
 //     body: 'hello world',
@@ -41,6 +40,7 @@ const client = new twilio(config.twilioSid, config.twilioToken);
 
 /* firebase stuff */
 const firebase = require("firebase");
+
 const fbSettings = {
   apiKey: config.firebaseKey,
   authDomain: config.firebaseAuth,
@@ -51,4 +51,24 @@ firebase.initializeApp(fbSettings);
 
 const databaseRef = firebase.database().ref();
 
-// const storageRef = firebase.storage().ref() --> leads to an error
+
+// /* google cloud stuff */
+const gcloud = require('@google-cloud/storage');
+let storage = new gcloud.Storage();
+
+const bucketName = 'sb-hacks-19-videos';
+const filename = 'videos/test.mp4';
+
+async function upload(){
+  await storage.bucket(bucketName).upload(filename, function(err, file){
+    if (!err) {
+    console.log('your file is now in your bucket.');
+  } else {
+    console.log('Error uploading file: ' + err);
+  }
+  });
+}
+
+upload();
+
+console.log('${filename} uploaded to bucket');
