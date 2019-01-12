@@ -29,7 +29,6 @@ app.listen(port, function() {
 /* twilio stuff */
 const twilio = require('twilio');
 const client = new twilio(config.twilioSid, config.twilioToken);
-<<<<<<< HEAD
 
 // client.messages.create({
 //     body: 'hello world',
@@ -51,4 +50,40 @@ firebase.initializeApp(fbSettings);
 
 const databaseRef = firebase.database().ref();
 
-// const storageRef = firebase.storage().ref() --> leads to an error
+/*//When a user submits a form, create a new page
+app.post('/submit', urlencodedParser, function(req, res){
+  var nom = req.body.nom;
+    /* save nom to database */
+  /*databaseRef.set ({
+    uuid: {
+      link: 'test'
+    }
+  });
+
+  res.redirect('http://myDomain/' + nom);
+});*/
+
+// Add to the database
+databaseRef.set({
+  "testurl": {
+    "link": 'fakeaudio'
+  }
+});
+
+// Iterate through the database and convert each link into a web page
+databaseRef.once("value")
+  .then(function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      // key will be "ada" the first time and "alan" the second time
+      var key = childSnapshot.key;
+      app.get(`/${key}`, function(request, response) {
+        response.render('test');
+      });
+      // childData will be the actual contents of the child
+      var childData = childSnapshot.val();
+  });
+});
+
+function createNewPage() {
+
+}
