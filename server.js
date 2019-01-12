@@ -9,6 +9,7 @@ const path = require('path');
 
 // Declare an instance of express
 const app = express();
+//const http = require('http');
 const port = 3000;
 
 app.use(bodyParser());
@@ -29,22 +30,6 @@ app.get('/test', function(request, response) {
   response.render('test');
 });
 
-app.listen(port, function() {
-  console.log('we are gucci');
-});
-
-/* twilio stuff */
-const twilio = require('twilio');
-const client = new twilio(config.twilioSid, config.twilioToken);
-
-// client.messages.create({
-//     body: 'hello world',
-//     to: config.receiverNumber,  // Text this number
-//     from: config.senderNumber // From a valid Twilio number
-// })
-// .then((message) => console.log(message.sid))
-// .done();
-
 /* firebase stuff */
 const firebase = require("firebase");
 
@@ -56,12 +41,27 @@ const fbSettings = {
 };
 firebase.initializeApp(fbSettings);
 
-const databaseRef = firebase.database().ref();
+const databaseRef = firebase.database().ref('podcasts/');
 
 
 // /* google cloud stuff */
 const gcloud = require('@google-cloud/storage');
 let storage = new gcloud.Storage();
+
+// Add to the database
+firebase.database().ref('podcasts/testurl1/').set({
+  'link': 'fakeaudio'
+});
+
+// Iterate through the database and convert each link into a web page
+databaseRef.once('value')
+  .then(function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      let url = childSnapshot.key;
+      let audio = childSnapshot.val().link;
+      app.get(`/${url}`, function(request, response) {
+        response.render('test');
+      });
 
 const bucketName = 'sb-hacks-19-videos';
 const filename = 'videos/test.mp4';
@@ -75,6 +75,19 @@ async function upload(){
   }
   });
 }
+
+/* socket io */
+/*
+const server = http.Server(app);
+server.listen(port);
+const socketIo = require('socket.io');
+const io = socketIo(server);
+
+io.on('connection', (socket) => {
+  socket.emit('hello', {
+    greeting: 'Hello world'
+  })
+})*/
 
 upload();
 
