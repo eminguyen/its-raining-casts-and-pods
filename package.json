@@ -1,0 +1,25 @@
+{
+  "name": "sb-hacks-19",
+  "version": "1.0.0",
+  "description": "Podcast saver website hack thing",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.16.4",
+    "twilio": "^3.27.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gits-lit/sb-hacks-19.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gits-lit/sb-hacks-19/issues"
+  },
+  "homepage": "https://github.com/gits-lit/sb-hacks-19#readme"
+}
