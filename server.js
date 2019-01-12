@@ -19,7 +19,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.get('/', function(request, response) {
-  response.render('index');
+  response.render('index', {
+    foo: 'bar',
+    key: 'value'
+  });
+});
+
+app.get('/test', function(request, response) {
+  response.render('test');
 });
 
 app.listen(port, function() {

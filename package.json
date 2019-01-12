@@ -4,6 +4,7 @@
   "description": "Podcast saver website hack thing",
   "main": "server.js",
   "dependencies": {
+    "@google-cloud/storage": "^2.3.4",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "ejs": "^2.6.1",
