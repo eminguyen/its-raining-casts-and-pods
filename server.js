@@ -21,12 +21,8 @@ app.set('view engine', 'ejs');
 
 app.get('/', function(request, response) {
   response.render('index', {
-    list: listUrls
+    list: listIds
   });
-});
-
-app.get('/test', function(request, response) {
-  response.render('test');
 });
 
 app.listen(port);
@@ -51,36 +47,47 @@ let storage = new gcloud.Storage();
 
 // Add to the database
 firebase.database().ref('podcasts/').set({
-  'fakeurl1': {
-    'link': 'fakeaudio1'
+  'podcast1': {
+    'id': 'fakelink1',
   },
-  'fakeurl2': {
-    'link': 'fakeaudio2'
+  'podcast2': {
+    'id': 'fakelink2',
   }
 });
 
-listUrls = []
+listIds = []
 
 // Iterate through the database and convert each link into a web page
 databaseRef.once('value')
   .then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
-      let url = childSnapshot.key;
-      let audio = childSnapshot.val().link;
-      listUrls.push({name: url})
-      app.get(`/${url}`, function(request, response) {
-        response.render('test');
+      let id = childSnapshot.val().id;
+      listIds.push({name: id})
+      app.get(`/${id}`, function(request, response) {
+        response.render('podcast', {
+          id: id,
+        });
       });
     });
-  })
-  .then(() => {
-    console.log(listUrls);
   });
 
 const bucketName = 'sb-hacks-19-videos';
-const filename = 'videos/test.mp4';
+const filename = 'fakelink1.mp4';
+const destFilename = `public/videos/${filename}`;
+const options = {
+  // The path to which the file should be downloaded, e.g. "./file.txt"
+  destination: destFilename,
+};
 
-async function upload(){
+// Downloads the files
+async function download() {
+  await storage
+    .bucket(bucketName)
+    .file(filename)
+    .download(options);
+}
+
+/*async function upload(){
   await storage.bucket(bucketName).upload(filename, function(err, file){
     if (!err) {
     console.log('your file is now in your bucket.');
@@ -88,7 +95,7 @@ async function upload(){
     console.log('Error uploading file: ' + err);
   }
   });
-}
+}*/
 
 /* socket io */
 /*
@@ -103,6 +110,4 @@ io.on('connection', (socket) => {
   })
 })*/
 
-upload();
-
-console.log('${filename} uploaded to bucket');
+download();
