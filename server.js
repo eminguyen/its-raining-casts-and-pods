@@ -25,6 +25,7 @@ app.get('/', function(request, response) {
 
 /* firebase stuff */
 const firebase = require("firebase");
+
 const fbSettings = {
   apiKey: config.firebaseKey,
   authDomain: config.firebaseAuth,
@@ -35,18 +36,10 @@ firebase.initializeApp(fbSettings);
 
 const databaseRef = firebase.database().ref('podcasts/');
 
-/*//When a user submits a form, create a new page
-app.post('/submit', urlencodedParser, function(req, res){
-  var nom = req.body.nom;
-    /* save nom to database */
-  /*databaseRef.set ({
-    uuid: {
-      link: 'test'
-    }
-  });
 
-  res.redirect('http://myDomain/' + nom);
-});*/
+// /* google cloud stuff */
+const gcloud = require('@google-cloud/storage');
+let storage = new gcloud.Storage();
 
 // Add to the database
 firebase.database().ref('podcasts/testurl1/').set({
@@ -62,9 +55,19 @@ databaseRef.once('value')
       app.get(`/${url}`, function(request, response) {
         response.render('test');
       });
-  });
-});
 
+const bucketName = 'sb-hacks-19-videos';
+const filename = 'videos/test.mp4';
+
+async function upload(){
+  await storage.bucket(bucketName).upload(filename, function(err, file){
+    if (!err) {
+    console.log('your file is now in your bucket.');
+  } else {
+    console.log('Error uploading file: ' + err);
+  }
+  });
+}
 
 /* socket io */
 /*
@@ -78,3 +81,7 @@ io.on('connection', (socket) => {
     greeting: 'Hello world'
   })
 })*/
+
+upload();
+
+console.log('${filename} uploaded to bucket');
