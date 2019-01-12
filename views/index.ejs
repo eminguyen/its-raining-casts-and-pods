@@ -7,6 +7,10 @@
   <title>Document</title>
 </head>
 <body>
-  <h1> Hello World </h1>
+  <ul>
+    <% for(var urls of list) { %>
+    <li><%= urls.name %></li>
+    <% } %>
+  </ul>
 </body>
 </html>

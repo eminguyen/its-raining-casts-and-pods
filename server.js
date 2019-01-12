@@ -21,14 +21,15 @@ app.set('view engine', 'ejs');
 
 app.get('/', function(request, response) {
   response.render('index', {
-    foo: 'bar',
-    key: 'value'
+    list: listUrls
   });
 });
 
 app.get('/test', function(request, response) {
   response.render('test');
 });
+
+app.listen(port);
 
 /* firebase stuff */
 const firebase = require("firebase");
@@ -49,9 +50,16 @@ const gcloud = require('@google-cloud/storage');
 let storage = new gcloud.Storage();
 
 // Add to the database
-firebase.database().ref('podcasts/testurl1/').set({
-  'link': 'fakeaudio'
+firebase.database().ref('podcasts/').set({
+  'fakeurl1': {
+    'link': 'fakeaudio1'
+  },
+  'fakeurl2': {
+    'link': 'fakeaudio2'
+  }
 });
+
+listUrls = []
 
 // Iterate through the database and convert each link into a web page
 databaseRef.once('value')
@@ -59,9 +67,15 @@ databaseRef.once('value')
     snapshot.forEach(function(childSnapshot) {
       let url = childSnapshot.key;
       let audio = childSnapshot.val().link;
+      listUrls.push({name: url})
       app.get(`/${url}`, function(request, response) {
         response.render('test');
       });
+    });
+  })
+  .then(() => {
+    console.log(listUrls);
+  });
 
 const bucketName = 'sb-hacks-19-videos';
 const filename = 'videos/test.mp4';
