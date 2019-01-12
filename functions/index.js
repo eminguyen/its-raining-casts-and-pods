@@ -5,12 +5,12 @@ const client = new twilio(config.twilioSid, config.twilioToken);
 
 const functions = require('firebase-functions');
 
-exports.textMessage = functions.database.ref('/')
+exports.textMessage = functions.database.ref('/{podcast}')
     .onCreate(event => {
-      const data = event.data.val;
+      const data = event._data;
 
       client.messages.create({
-          body: 'Your new podcast is available at' + data.link,
+          body: 'Your new podcast is available at ' + data.link,
           to: config.receiverNumber,  // Text this number
           from: config.senderNumber // From a valid Twilio number
       })
