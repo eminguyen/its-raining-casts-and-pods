@@ -10,7 +10,7 @@ exports.textMessage = functions.database.ref('/{podcast}')
       const data = event._data;
 
       client.messages.create({
-          body: 'Your new podcast is available at ' + data.link,
+          body: 'Your new podcast is available at ' + data.id,
           to: config.receiverNumber,  // Text this number
           from: config.senderNumber // From a valid Twilio number
       })
