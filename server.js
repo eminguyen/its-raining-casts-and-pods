@@ -9,6 +9,7 @@ const path = require('path');
 
 // Declare an instance of express
 const app = express();
+//const http = require('http');
 const port = 3000;
 
 app.use(bodyParser());
@@ -22,22 +23,6 @@ app.get('/', function(request, response) {
   response.render('index');
 });
 
-app.listen(port, function() {
-  console.log('we are gucci');
-});
-
-/* twilio stuff */
-const twilio = require('twilio');
-const client = new twilio(config.twilioSid, config.twilioToken);
-
-// client.messages.create({
-//     body: 'hello world',
-//     to: config.receiverNumber,  // Text this number
-//     from: config.senderNumber // From a valid Twilio number
-// })
-// .then((message) => console.log(message.sid))
-// .done();
-
 /* firebase stuff */
 const firebase = require("firebase");
 const fbSettings = {
@@ -48,7 +33,7 @@ const fbSettings = {
 };
 firebase.initializeApp(fbSettings);
 
-const databaseRef = firebase.database().ref();
+const databaseRef = firebase.database().ref('podcasts/');
 
 /*//When a user submits a form, create a new page
 app.post('/submit', urlencodedParser, function(req, res){
@@ -64,26 +49,32 @@ app.post('/submit', urlencodedParser, function(req, res){
 });*/
 
 // Add to the database
-databaseRef.set({
-  "testurl": {
-    "link": 'fakeaudio'
-  }
+firebase.database().ref('podcasts/testurl1/').set({
+  'link': 'fakeaudio'
 });
 
 // Iterate through the database and convert each link into a web page
-databaseRef.once("value")
+databaseRef.once('value')
   .then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
-      // key will be "ada" the first time and "alan" the second time
-      var key = childSnapshot.key;
-      app.get(`/${key}`, function(request, response) {
+      let url = childSnapshot.key;
+      let audio = childSnapshot.val().link;
+      app.get(`/${url}`, function(request, response) {
         response.render('test');
       });
-      // childData will be the actual contents of the child
-      var childData = childSnapshot.val();
   });
 });
 
-function createNewPage() {
 
-}
+/* socket io */
+/*
+const server = http.Server(app);
+server.listen(port);
+const socketIo = require('socket.io');
+const io = socketIo(server);
+
+io.on('connection', (socket) => {
+  socket.emit('hello', {
+    greeting: 'Hello world'
+  })
+})*/
