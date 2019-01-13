@@ -153,12 +153,11 @@ async function speechToText(soundFile){
   const ffmpeg = require('fluent-ffmpeg');
   const client = new speech.SpeechClient();
   const fileName = `public/videos/${soundFile}`;
-
   await setFFMPEG();
 
-  async function setFFMPEG() {
+  function setFFMPEG() {
     //make sure you set the correct path to your video file
-    var proc = await new ffmpeg({ source: fileName, nolog: true })
+    var proc = new ffmpeg({ source: fileName, nolog: true })
     .toFormat('flac')
     // setup event handlers
     .on('end', function() {
@@ -168,12 +167,12 @@ async function speechToText(soundFile){
       console.log('an error happened: ' + err.message);
     })
     // save to file <-- the new file I want -->
-    .saveToFile('output');
+    .saveToFile('output')/*`/public/outputs/${soundFile}`)*/
     return;
   }
 
   // reads local audio files
-  const file = fs.readFileSync('output');
+  const file = fs.readFileSync('output')/*`/public/outputs/${soundFile}`);*/
   const audioBytes = file.toString('base64');
   console.log('file has been converted successfully');
 
