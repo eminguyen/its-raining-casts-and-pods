@@ -39,7 +39,7 @@ const fbSettings = {
 };
 firebase.initializeApp(fbSettings);
 
-const databaseRef = firebase.database().ref('podcasts/');
+const databaseRef = firebase.database().ref('/');
 
 
 // /* google cloud stuff */
@@ -47,12 +47,18 @@ const gcloud = require('@google-cloud/storage');
 let storage = new gcloud.Storage();
 
 // Add to the database
-firebase.database().ref('podcasts/').set({
+firebase.database().ref('/').set({
   'podcast1': {
     'id': 'fakelink1',
   },
   'podcast2': {
     'id': 'fakelink2',
+  },
+  'podcast3': {
+    'id': 'fakelink3',
+  },
+  'podcast4': {
+    'id': 'fakelink4',
   }
 });
 

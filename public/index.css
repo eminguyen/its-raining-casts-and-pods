@@ -1,0 +1,35 @@
+.title {
+  font-family: 'Archivo Black', sans-serif;
+  color: white;
+  margin-top: 30px;
+  text-align: center;
+}
+
+body {
+  background-color: #738290;
+}
+
+.card {
+  width: 18rem;
+  margin: 20px;
+}
+
+.fa .fa-star {
+  color: #738290;
+  right: 0;
+}
+
+#canvas {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+audio {
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  width: calc(100% - 20px);
+}
