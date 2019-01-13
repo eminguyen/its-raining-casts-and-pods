@@ -48,7 +48,7 @@ const databaseRef = firebase.database().ref('/');
 const gcloud = require('@google-cloud/storage');
 let storage = new gcloud.Storage();
 
-Add to the database
+// Add to the database
 firebase.database().ref('/').set({
   'podcast1': {
     'id': 'fakelink1',
@@ -137,13 +137,12 @@ async function main(){
   // reads local audio files
   const file = fs.readFileSync(fileName);
   const audioBytes = file.toString('base64');
-  const model = 'video'
 
   const speechConfig = {
     encoding: 'FLAC',
-    // sampleRateHertz: 30000,
+    enableAutomaticPunctuation: true,
     languageCode: 'en-US',
-    // model: model
+    model: 'video'
   };
 
   const audio = {
