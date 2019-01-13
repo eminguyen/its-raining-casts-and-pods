@@ -30,74 +30,6 @@ app.listen(port);
 
 
 
-/* Recording audio */
-
-//
-// const mic = require('mic');
-// const fs = require('fs');
-// const url = require('url');
-//
-// const micInstance = new mic({
-//   rate: '16000',
-//   channels: '1',
-//   debug: true,
-//   exitOnSilence: 6,
-//   fileType: 'mp3'
-// });
-//
-// const micInputStream = micInstance.getAudioStream();
-// const outputFileStream = fs.createWriteStream('test.mp3', {encoding: "binary"});
-//
-// micInputStream.pipe(outputFileStream);
-//
-// micInputStream.on('data', function(data) {
-//   console.log("Received Input Stream: " + data.length);
-// });
-// micInputStream.on('error', function(err){
-//   console.log("Error in Input Stream: " + err);
-// })
-//
-// micInputStream.on('startComplete', function(){
-//   console.log("Got SIGNAL startComplete");
-//   setTimeout(function() {
-//     micInstance.pause();
-//   }, 5000);
-//   setTimeout(function() {
-//     micInstance.stop();
-//   }, 5000);
-// });
-//
-// micInputStream.on('stopComplete', function() {
-//     console.log("Got SIGNAL stopComplete");
-//     outputFileStream.end();
-// });
-//
-// micInputStream.on('pauseComplete', function() {
-//     console.log("Got SIGNAL pauseComplete");
-//     setTimeout(function() {
-//         micInstance.resume();
-//     }, 5000);
-// });
-//
-// micInputStream.on('resumeComplete', function() {
-//     console.log("Got SIGNAL resumeComplete");
-//     setTimeout(function() {
-//         micInstance.stop();
-//     }, 5000);
-// });
-//
-// micInputStream.on('silence', function() {
-//     console.log("Got SIGNAL silence");
-// });
-//
-// micInputStream.on('processExitComplete', function() {
-//     console.log("Got SIGNAL processExitComplete");
-// });
-
-// micInstance.start();
-
-
-
 /* firebase stuff */
 const firebase = require("firebase");
 
@@ -116,7 +48,7 @@ const databaseRef = firebase.database().ref('/');
 const gcloud = require('@google-cloud/storage');
 let storage = new gcloud.Storage();
 
-// Add to the database
+Add to the database
 firebase.database().ref('/').set({
   'podcast1': {
     'id': 'fakelink1',
@@ -196,8 +128,11 @@ async function main(){
   const fs = require('fs');
 
   const client = new speech.SpeechClient();
-  // name of file to transcribe
-  const fileName = 'public/videos/testAudio.mp3'
+
+  // name of file to transcribe (make sure to be a .flac)
+  // use the command, ffmpeg -i [original flac file] -ac 1 [new mono flac]
+
+  const fileName = 'public/videos/mono.flac'
 
   // reads local audio files
   const file = fs.readFileSync(fileName);
@@ -205,20 +140,21 @@ async function main(){
   const model = 'video'
 
   const speechConfig = {
-    encoding: 'LINEAR16',
-    sampleRateHertz: 16000,
+    encoding: 'FLAC',
+    // sampleRateHertz: 30000,
     languageCode: 'en-US',
     // model: model
   };
 
   const audio = {
-    content: fs.readFileSync(fileName).toString('base64'),
+    content: audioBytes,
   };
 
   const request = {
     config: speechConfig,
     audio: audio,
   };
+
 
   // Detects speech in the audio file
   client
@@ -227,36 +163,37 @@ async function main(){
       console.log(data);
       const response = data[0];
       console.log(response);
-      const transcription = response.results
+      transcription = response.results
         .map(result => result.alternatives[0].transcript)
         .join('\n');
       console.log(`Transcription: `, transcription);
+      translate(transcription);
     })
     .catch(err => {
       console.error('ERROR:', err);
     });
 }
 
-main();
-
 /* translation */
-// const {Translate} = require('@google-cloud/translate');
-// const projectId = config.projectID;
-// const translate = new Translate({
-//   projectId: projectId
-// });
-//
-// // text to translate
-// const text = 'Hello, world!';
-// // target language
-// const target = 'ru';
+async function translate(text){
+  const {Translate} = require('@google-cloud/translate');
+  const projectId = config.projectID;
+  const translate = new Translate({
+    projectId: projectId
+  });
 
-// Translates the text into the target language. "text" can be a string for
-// translating a single piece of text, or an array of strings for translating
-// multiple texts.
-// let [translations] = await translate.translate(text, target);
-// translations = Array.isArray(translations) ? translations : [translations];
-// console.log('Translations:');
-// translations.forEach((translation, i) => {
-//   console.log(`${text[i]} => (${target}) ${translation}`);
-// });
+  // target language
+  const target = 'zh-CN';
+
+  // Translates the text into the target language. "text" can be a string for
+  // translating a single piece of text, or an array of strings for translating
+  // multiple texts.
+  let [translations] = await translate.translate(text, target);
+  translations = Array.isArray(translations) ? translations : [translations];
+  console.log('Translations:');
+  translations.forEach((translation, i) => {
+    console.log(`${text[i]} => (${target}) ${translation}`);
+  });
+}
+
+main();
