@@ -28,6 +28,8 @@ app.get('/', function(request, response) {
 
 app.listen(port);
 
+
+
 /* firebase stuff */
 const firebase = require("firebase");
 
@@ -134,3 +136,78 @@ app.post('/public/videos/', upload.single('video'),function(req, res) {
 });
 
 module.exports = app;
+
+/* speech-to-text */
+async function main(){
+  const speech = require('@google-cloud/speech')  ;
+  const fs = require('fs');
+
+  const client = new speech.SpeechClient();
+
+  // name of file to transcribe (make sure to be a .flac)
+  // use the command, ffmpeg -i [original flac file] -ac 1 [new mono flac]
+
+  const fileName = 'public/videos/mono.flac'
+
+  // reads local audio files
+  const file = fs.readFileSync(fileName);
+  const audioBytes = file.toString('base64');
+
+  const speechConfig = {
+    encoding: 'FLAC',
+    enableAutomaticPunctuation: true,
+    languageCode: 'en-US',
+    model: 'video'
+  };
+
+  const audio = {
+    content: audioBytes,
+  };
+
+  const request = {
+    config: speechConfig,
+    audio: audio,
+  };
+
+
+  // Detects speech in the audio file
+  client
+    .recognize(request)
+    .then(data => {
+      console.log(data);
+      const response = data[0];
+      console.log(response);
+      transcription = response.results
+        .map(result => result.alternatives[0].transcript)
+        .join('\n');
+      console.log(`Transcription: `, transcription);
+      translate(transcription);
+    })
+    .catch(err => {
+      console.error('ERROR:', err);
+    });
+}
+
+/* translation */
+async function translate(text){
+  const {Translate} = require('@google-cloud/translate');
+  const projectId = config.projectID;
+  const translate = new Translate({
+    projectId: projectId
+  });
+
+  // target language
+  const target = 'zh-CN';
+
+  // Translates the text into the target language. "text" can be a string for
+  // translating a single piece of text, or an array of strings for translating
+  // multiple texts.
+  let [translations] = await translate.translate(text, target);
+  translations = Array.isArray(translations) ? translations : [translations];
+  console.log('Translations:');
+  translations.forEach((translation, i) => {
+    console.log(`${text[i]} => (${target}) ${translation}`);
+  });
+}
+
+main();
