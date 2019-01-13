@@ -37,15 +37,15 @@ window.onload = function() {
 
     analyser.getByteFrequencyData(dataArray);
 
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = "#FFFEFC";
     ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
     for (var i = 0; i < bufferLength; i++) {
-      barHeight = dataArray[i];
+      barHeight = dataArray[i] * 3;
 
-      var r = barHeight + (25 * (i/bufferLength));
-      var g = 250 * (i/bufferLength);
-      var b = 50;
+      var b = 230 + (60 * (i/bufferLength));
+      var g = 150 + (60 * (i/bufferLength));
+      var r = 70;
 
       ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
       ctx.fillRect(x, HEIGHT - barHeight, barWidth, barHeight);

@@ -59,7 +59,22 @@ firebase.database().ref('/').set({
   },
   'podcast4': {
     'id': 'fakelink4',
-  }
+  },
+  'podcast5': {
+    'id': 'fakelink5',
+  },
+  'podcast6': {
+    'id': 'fakelink6',
+  },
+  'podcast7': {
+    'id': 'fakelink7',
+  },
+  'podcast8': {
+    'id': 'fakelink8',
+  },
+  'podcast9': {
+    'id': 'fakelink9',
+  },
 });
 
 listIds = []
@@ -104,17 +119,5 @@ async function download() {
   });
 }*/
 
-/* socket io */
-/*
-const server = http.Server(app);
-server.listen(port);
-const socketIo = require('socket.io');
-const io = socketIo(server);
-
-io.on('connection', (socket) => {
-  socket.emit('hello', {
-    greeting: 'Hello world'
-  })
-})*/
 
 download();
