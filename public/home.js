@@ -53,6 +53,22 @@ navigator.mediaDevices.getUserMedia(constraints).then(function(mediaStream) {
     let audioURL = window.URL.createObjectURL(blob);
     audioSave.src = audioURL;
     console.log(audioURL);
+    var video = blob;
+    var formdata = new FormData();
+    formdata.append('video', video);
+    $.ajax({
+      url: 'public/videos/',
+      data: formdata,
+      contentType: false,
+      processData: false,
+      type: 'POST',
+      'success':function(data){
+        alert('Done recording podcast! Refresh the page or replay it below');
+      },
+      error: function(jqXHR, textStatus, errorMessage) {
+        alert('Error uploading: ' + errorMessage);
+      }
+    });
   }
 })
 .catch(err => {

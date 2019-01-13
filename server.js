@@ -44,38 +44,7 @@ const databaseRef = firebase.database().ref('/');
 
 // /* google cloud stuff */
 const gcloud = require('@google-cloud/storage');
-let storage = new gcloud.Storage();
-
-// Add to the database
-firebase.database().ref('/').set({
-  'podcast1': {
-    'id': 'fakelink1',
-  },
-  'podcast2': {
-    'id': 'fakelink2',
-  },
-  'podcast3': {
-    'id': 'fakelink3',
-  },
-  'podcast4': {
-    'id': 'fakelink4',
-  },
-  'podcast5': {
-    'id': 'fakelink5',
-  },
-  'podcast6': {
-    'id': 'fakelink6',
-  },
-  'podcast7': {
-    'id': 'fakelink7',
-  },
-  'podcast8': {
-    'id': 'fakelink8',
-  },
-  'podcast9': {
-    'id': 'fakelink9',
-  },
-});
+let gstorage = new gcloud.Storage();
 
 listIds = []
 
@@ -84,7 +53,12 @@ databaseRef.once('value')
   .then(function(snapshot) {
     snapshot.forEach(function(childSnapshot) {
       let id = childSnapshot.val().id;
-      listIds.push({name: id})
+      let description = childSnapshot.val().description;
+      let title = childSnapshot.val().title;
+      listIds.push(
+      {name: id,
+      title: title,
+      description: description});
       app.get(`/${id}`, function(request, response) {
         response.render('podcast', {
           id: id,
@@ -103,14 +77,47 @@ const options = {
 
 // Downloads the files
 async function download() {
-  await storage
+  await gstorage
     .bucket(bucketName)
     .file(filename)
     .download(options);
 }
 
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/videos/')
+  },
+  filename: function (req, file, cb) {
+    cb(null, 'podcast-'+ Date.now())
+  }
+})
+const upload = multer({storage: storage})
+
+app.post('/public/videos/', upload.single('video'),function(req, res) {
+    console.log(req.file);
+    firebase.database().ref(`/${req.file.filename}`).set({
+        'title': `Podcast: ${req.file.filename.substring(8)}`,
+        'description': 'Feel free to change the description!',
+        'id': req.file.filename
+    });
+    listIds.push({
+      title: `Podcast: ${req.file.filename.substring(8)}`,
+      description: 'Feel free to change the description!',
+      name: req.file.filename
+    });
+    app.get(`/${req.file.filename}`, function(request, response) {
+      response.render('podcast', {
+        id: req.file.filename,
+      });
+    });
+    res.send(req.file);
+});
+
+module.exports = app;
 /*async function upload(){
-  await storage.bucket(bucketName).upload(filename, function(err, file){
+  await gstorage.bucket(bucketName).upload(filename, function(err, file){
     if (!err) {
     console.log('your file is now in your bucket.');
   } else {
