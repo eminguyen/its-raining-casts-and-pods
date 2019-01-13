@@ -16,11 +16,49 @@ $(document).ready(function () {
   $('#playButton').on('click', function() {
     $(this).toggleClass('fa-play fa-stop');
   });
+  $('.fa-refresh').on('click', function() {
+    window.location.reload();
+  });
 });
 
 let constraints = {
   audio: true
 };
+
+/*
+var dbRef = new Firebase("https://sb-hacks-19.firebaseio.com/");
+
+dbRef.child('title').on('value', function(snapshot){
+  $('#title').html(snapshot.val());
+});
+
+dbRef.child('description').on('value', function(snapshot){
+  $('#description').html(snapshot.val());
+});
+
+$('[contenteditable]')
+  .on('focus', function(){
+    var $this = $(this);
+    $this.data('before', $this.html());
+    return $this;
+  })
+  .on('blur keyup paste input', function(){
+    var $this = $(this),
+    field     = $this.data('field'),
+    keyValue  = {};
+
+    if ($this.data('before') !== $this.html()) {
+      $this.data('before', $this.html());
+      keyValue[field] = $this.html();
+      dbRef.update(keyValue);
+    }
+
+    return $this;
+  })
+;*/
+
+
+
 
 navigator.mediaDevices.getUserMedia(constraints).then(function(mediaStream) {
   /*let audio = document.querySelector('audio');

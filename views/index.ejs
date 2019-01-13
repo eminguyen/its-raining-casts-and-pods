@@ -11,9 +11,9 @@
   <title>Podcasts</title>
 </head>
 <body>
-  <h1 class="title">It's Raining Casts and Pods  <i id="playButton" class="fa fa-play"></i></h1>
+  <h1 class="title">It's Raining Casts and Pods</h1>
+  <h1 id="icons"><i id="playButton" class="fa fa-play"></i>  <i class="fa fa-refresh"></i></h1>
   <ul>
-  <!--<audio controls id='audio1'></audio> -->
   <div class="audioCont">
     <audio controls id='audioSaver'></audio>
   </div>
@@ -23,12 +23,11 @@
         <div class="col-sm" align="center">
           <div class="card">
             <div class="card-body">
-              <h5 contenteditable="true" class="card-title"><%= urls.title %></h5>
-              <p contenteditable="true" class="card-text"><%= urls.description %></p>
+              <h5 contenteditable="true" data-field="title" id="title" class="card-title"><%= urls.title %></h5>
+              <p contenteditable="true" data-field="description" id="description" class="card-text"><%= urls.description %></p>
               <div class="text-center">
                 <a href="/<%= urls.name %>" class="btn btn-primary listener">Listen</a>
               </div>
-              <!-- <i class="fa fa-star"></i> -->
             </div>
           </div>
         </div>

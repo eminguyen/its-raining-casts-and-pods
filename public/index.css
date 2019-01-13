@@ -16,7 +16,16 @@ body {
   cursor: pointer;
 }
 
-.fa-play {
+#icons {
+  position: fixed;
+  right: 5%;
+}
+
+.fa-refresh:hover {
+  cursor: pointer;
+}
+
+.fa {
   color: white;
   size: 5em;
 }

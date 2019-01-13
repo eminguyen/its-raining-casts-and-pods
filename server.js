@@ -48,6 +48,8 @@ let gstorage = new gcloud.Storage();
 
 listIds = []
 
+const bucketName = 'sb-hacks-19-videos';
+
 // Iterate through the database and convert each link into a web page
 databaseRef.once('value')
   .then(function(snapshot) {
@@ -59,6 +61,24 @@ databaseRef.once('value')
       {name: id,
       title: title,
       description: description});
+
+      let filename = id;
+      let destFilename = `public/videos/${filename}`;
+      let options = {
+        // The path to which the file should be downloaded, e.g. "./file.txt"
+        destination: destFilename,
+      };
+
+      // Downloads the files
+      async function download() {
+        await gstorage
+          .bucket(bucketName)
+          .file(filename)
+          .download(options);
+      }
+
+      download();
+
       app.get(`/${id}`, function(request, response) {
         response.render('podcast', {
           id: id,
@@ -66,22 +86,6 @@ databaseRef.once('value')
       });
     });
   });
-
-const bucketName = 'sb-hacks-19-videos';
-const filename = 'fakelink1.mp4';
-const destFilename = `public/videos/${filename}`;
-const options = {
-  // The path to which the file should be downloaded, e.g. "./file.txt"
-  destination: destFilename,
-};
-
-// Downloads the files
-async function download() {
-  await gstorage
-    .bucket(bucketName)
-    .file(filename)
-    .download(options);
-}
 
 const multer = require('multer');
 
@@ -112,19 +116,21 @@ app.post('/public/videos/', upload.single('video'),function(req, res) {
         id: req.file.filename,
       });
     });
+
+    // Uploads files
+    async function uploading(){
+      await gstorage.bucket(bucketName).upload(`./public/videos/${req.file.filename}`, function(err, file){
+        if (!err) {
+        console.log('your file is now in your bucket.');
+      } else {
+        console.log('Error uploading file: ' + err);
+      }
+      });
+    }
+
+    uploading();
+
     res.send(req.file);
 });
 
 module.exports = app;
-/*async function upload(){
-  await gstorage.bucket(bucketName).upload(filename, function(err, file){
-    if (!err) {
-    console.log('your file is now in your bucket.');
-  } else {
-    console.log('Error uploading file: ' + err);
-  }
-  });
-}*/
-
-
-download();
