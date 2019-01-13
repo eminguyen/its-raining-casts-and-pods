@@ -1,19 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link href="https://fonts.googleapis.com/css?family=B612+Mono" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Archivo+Black" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <link href="index.css" rel="stylesheet" type="text/css">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <title>Podcasts</title>
 </head>
 <body>
-  <h1 class="title">INSERT BASSEL'S CREATIVITY</h1>
+  <h1 class="title">It's Raining Casts and Pods  <i id="playButton" class="fa fa-play"></i></h1>
   <ul>
+  <!--<audio controls id='audio1'></audio> -->
+  <div class="audioCont">
+    <audio controls id='audioSaver'></audio>
+  </div>
+  <div class="container">
+    <div class="row" style="float: none; margin: 0 auto;">
     <% for(var urls of list) { %>
-    <li><%= urls.name %></li>
+        <div class="col-sm" align="center">
+          <div class="card">
+            <div class="card-body">
+              <h5 contenteditable="true" class="card-title">Podcast: 010919</h5>
+              <p contenteditable="true" class="card-text">CSE11: Primative Data Types</p>
+              <div class="text-center">
+                <a href="/<%= urls.name %>" class="btn btn-primary listener">Listen</a>
+              </div>
+              <!-- <i class="fa fa-star"></i> -->
+            </div>
+          </div>
+        </div>
     <% } %>
+    </div>
+  </div>
   </ul>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+  <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
+  <script src="home.js"> </script>
 </body>
 </html>

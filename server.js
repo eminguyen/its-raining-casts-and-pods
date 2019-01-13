@@ -109,7 +109,7 @@ const fbSettings = {
 };
 firebase.initializeApp(fbSettings);
 
-const databaseRef = firebase.database().ref('podcasts/');
+const databaseRef = firebase.database().ref('/');
 
 
 // /* google cloud stuff */
@@ -117,13 +117,34 @@ const gcloud = require('@google-cloud/storage');
 let storage = new gcloud.Storage();
 
 // Add to the database
-firebase.database().ref('podcasts/').set({
+firebase.database().ref('/').set({
   'podcast1': {
     'id': 'fakelink1',
   },
   'podcast2': {
     'id': 'fakelink2',
-  }
+  },
+  'podcast3': {
+    'id': 'fakelink3',
+  },
+  'podcast4': {
+    'id': 'fakelink4',
+  },
+  'podcast5': {
+    'id': 'fakelink5',
+  },
+  'podcast6': {
+    'id': 'fakelink6',
+  },
+  'podcast7': {
+    'id': 'fakelink7',
+  },
+  'podcast8': {
+    'id': 'fakelink8',
+  },
+  'podcast9': {
+    'id': 'fakelink9',
+  },
 });
 
 listIds = []
@@ -168,18 +189,6 @@ async function upload(){
   });
 }
 
-/* socket io */
-/*
-const server = http.Server(app);
-server.listen(port);
-const socketIo = require('socket.io');
-const io = socketIo(server);
-
-io.on('connection', (socket) => {
-  socket.emit('hello', {
-    greeting: 'Hello world'
-  })
-})*/
 
 /* speech-to-text */
 async function main(){
