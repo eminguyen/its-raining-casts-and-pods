@@ -73,6 +73,36 @@ body {
   height: 10%;
 }
 
+#readingButton {
+  z-index: 10;
+  color: #90CAF9 !important;
+  position: fixed;
+  font-size: 4rem;
+  left: 10px;
+  top: 10px;
+}
+
+.ui-widget-content {
+  border-radius: 5px;
+  border-color: transparent;
+  border-width: 5px;
+  -webkit-box-shadow: -1px 0px 20px -6px rgba(100,100,100,1);
+  -moz-box-shadow: -1px 0px 20px -6px rgba(100,100,100,1);
+  box-shadow: -1px 0px 20px -6px rgba(100,100,100,1);
+}
+
+.ui-dialog-titlebar-close {
+    visibility: hidden;
+}
+
+.ui-widget-content:hover {
+  cursor: pointer;
+}
+
+#readingButton:hover {
+  cursor: pointer;
+}
+
 .audioCont {
   text-align: center;
 }

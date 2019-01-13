@@ -57,3 +57,17 @@ window.onload = function() {
   audio.play();
   renderFrame();
 };
+
+$(function() {
+   $( "#dialog" ).dialog({
+      autoOpen: false,
+   });
+   $( "#readingButton" ).click(function() {
+     if($('#dialog').dialog('isOpen')) {
+       $( "#dialog" ).dialog( "close" );
+     }
+     else {
+       $( "#dialog" ).dialog( "open" );
+     }
+   });
+});

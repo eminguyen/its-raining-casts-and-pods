@@ -86,11 +86,12 @@ navigator.mediaDevices.getUserMedia(constraints).then(function(mediaStream) {
     chunks.push(ev.data);
   }
   mediaRecorder.onstop = (ev) => {
-    let blob = new Blob(chunks, {'type' : 'video/mp4;'});
+    let blob = new Blob(chunks, {'type' : 'audio/wav; codecs=LINEAR16'});
     chunks = [];
     let audioURL = window.URL.createObjectURL(blob);
     audioSave.src = audioURL;
     console.log(audioURL);
+    //var file = new File([blob], `${audioURL}.wav`, {'type': 'audio/wav', lastModified: Date.now()});
     var video = blob;
     var formdata = new FormData();
     formdata.append('video', video);
@@ -112,3 +113,9 @@ navigator.mediaDevices.getUserMedia(constraints).then(function(mediaStream) {
 .catch(err => {
   console.log(err);
 });
+
+var reader = new FileReader();
+reader.readAsDataURL(blob);
+reader.onloadend = function() {
+  base64data = reader.result;
+}

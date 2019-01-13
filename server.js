@@ -59,6 +59,7 @@ databaseRef.once('value')
       let id = childSnapshot.val().id;
       let description = childSnapshot.val().description;
       let title = childSnapshot.val().title;
+      let transcription = childSnapshot.val().transcription;
       listIds.push(
       {name: id,
       title: title,
@@ -78,12 +79,13 @@ databaseRef.once('value')
           .file(filename)
           .download(options);
       }
-
+      console.log('DOWNLOADING');
       download();
 
       app.get(`/${id}`, function(request, response) {
         response.render('podcast', {
           id: id,
+          transcription: transcription
         });
       });
     });
@@ -102,59 +104,82 @@ const storage = multer.diskStorage({
 const upload = multer({storage: storage})
 
 app.post('/public/videos/', upload.single('video'),function(req, res) {
-    console.log(req.file);
-    firebase.database().ref(`/${req.file.filename}`).set({
-        'title': `Podcast: ${req.file.filename.substring(8)}`,
-        'description': 'Feel free to change the description!',
-        'id': req.file.filename
-    });
-    listIds.push({
-      title: `Podcast: ${req.file.filename.substring(8)}`,
-      description: 'Feel free to change the description!',
-      name: req.file.filename
-    });
-    app.get(`/${req.file.filename}`, function(request, response) {
-      response.render('podcast', {
-        id: req.file.filename,
-      });
-    });
-
-    // Uploads files
-    async function uploading(){
-      await gstorage.bucket(bucketName).upload(`./public/videos/${req.file.filename}`, function(err, file){
-        if (!err) {
-        console.log('your file is now in your bucket.');
-      } else {
-        console.log('Error uploading file: ' + err);
-      }
-      });
-    }
-
-    uploading();
-
-    res.send(req.file);
+  allSortsOfStuff(req, res);
 });
+
+async function allSortsOfStuff(req, res) {
+  let transcription = await speechToText(req.file.filename);
+  let id = req.file.filename;
+  await firebase.database().ref(`/${id}`).set({
+      'title': `Podcast: ${id.substring(8)}`,
+      'description': 'Feel free to change the description!',
+      'id': id,
+      'transcription': transcription
+  });
+  await listIds.push({
+    title: `Podcast: ${id.substring(8)}`,
+    description: 'Feel free to change the description!',
+    name: id,
+  });
+  await app.get(`/${id}`, function(request, response) {
+    response.render('podcast', {
+      id: id,
+      transcription: transcription
+    });
+  });
+
+  // Uploads files
+  async function uploading(){
+    await gstorage.bucket(bucketName).upload(`./public/videos/${req.file.filename}`, function(err, file){
+      if (!err) {
+      console.log('your file is now in your bucket.');
+    } else {
+      console.log('Error uploading file: ' + err);
+    }
+    });
+  }
+
+  await uploading();
+
+  await res.send(req.file);
+}
 
 module.exports = app;
 
 /* speech-to-text */
-async function main(){
+async function speechToText(soundFile){
   const speech = require('@google-cloud/speech')  ;
   const fs = require('fs');
-
+  const ffmpeg = require('fluent-ffmpeg');
   const client = new speech.SpeechClient();
+  const fileName = `public/videos/${soundFile}`;
 
-  // name of file to transcribe (make sure to be a .flac)
-  // use the command, ffmpeg -i [original flac file] -ac 1 [new mono flac]
+  await setFFMPEG();
 
-  const fileName = 'public/videos/mono.flac'
+  async function setFFMPEG() {
+    //make sure you set the correct path to your video file
+    var proc = await new ffmpeg({ source: fileName, nolog: true })
+    .toFormat('flac')
+    // setup event handlers
+    .on('end', function() {
+      console.log('converted')
+    })
+    .on('error', function(err) {
+      console.log('an error happened: ' + err.message);
+    })
+    // save to file <-- the new file I want -->
+    .saveToFile('output');
+    return;
+  }
 
   // reads local audio files
-  const file = fs.readFileSync(fileName);
+  const file = fs.readFileSync('output');
   const audioBytes = file.toString('base64');
+  console.log('file has been converted successfully');
 
   const speechConfig = {
     encoding: 'FLAC',
+    sampleRateHertz: 48000,
     enableAutomaticPunctuation: true,
     languageCode: 'en-US',
     model: 'video'
@@ -169,9 +194,8 @@ async function main(){
     audio: audio,
   };
 
-
   // Detects speech in the audio file
-  client
+  return client
     .recognize(request)
     .then(data => {
       console.log(data);
@@ -179,9 +203,9 @@ async function main(){
       console.log(response);
       transcription = response.results
         .map(result => result.alternatives[0].transcript)
-        .join('\n');
-      console.log(`Transcription: `, transcription);
-      translate(transcription);
+        .join('\t');
+      console.log(transcription);
+      return transcription;
     })
     .catch(err => {
       console.error('ERROR:', err);
@@ -209,5 +233,3 @@ async function translate(text){
     console.log(`${text[i]} => (${target}) ${translation}`);
   });
 }
-
-main();
